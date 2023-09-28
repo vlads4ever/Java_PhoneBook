@@ -1,7 +1,7 @@
 package org.example;
 
-public class IncorrectAmountOfData extends Exception{
-    public IncorrectAmountOfData(String message) {
+public class IncorrectAmountOfDataException extends Exception{
+    public IncorrectAmountOfDataException(String message) {
        super(message);
     }
 }

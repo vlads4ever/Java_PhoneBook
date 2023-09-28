@@ -8,9 +8,9 @@ public class Person {
     private String patronymic;
     private String gender;
     private String phoneNumber;
-    private String birthday;
+    private Date birthday;
 
-    public Person(String surname, String name, String patronymic, String gender, String phoneNumber, String birthday) {
+    public Person(String surname, String name, String patronymic, Date birthday, String phoneNumber, String gender) {
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
@@ -39,7 +39,7 @@ public class Person {
         return phoneNumber;
     }
 
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
@@ -63,7 +63,19 @@ public class Person {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "surname='" + surname + '\'' +
+                ", name='" + name + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", gender='" + gender + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", birthday=" + birthday +
+                '}';
     }
 }
