@@ -91,25 +91,25 @@ public class Main {
         if (!surname.matches("[А-Яа-яЁёa-zA-Z]+") |
                 !name.matches("[А-Яа-яЁёa-zA-Z]+") |
                 !patronymic.matches("[А-Яа-яЁёa-zA-Z]+"))
-            throw new IncorrectNameFormatException("You entered wrong person`s name.");
+            throw new IncorrectNameFormatException("You entered wrong person`s name. Your name contains wrong symbol.");
         return true;
     }
 
     public static boolean checkBirthday(String birthday) throws IncorrectDateException {
         if (!birthday.matches("\\d{2}\\.\\d{2}.\\d{4}"))
-            throw new IncorrectDateException("You entered wrong date format.");
+            throw new IncorrectDateException("You entered wrong date format. Must be dd.mm.yyyy");
         return true;
     }
 
     public static boolean checkPhoneNumber(String phoneNumber) throws IncorrectPhoneNumberException {
-        if (!phoneNumber.matches("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"))
-            throw new IncorrectPhoneNumberException("You entered wrong phone number.");
+        if (!phoneNumber.matches("\\d{11}"))
+            throw new IncorrectPhoneNumberException("You entered wrong phone number. Must be 11 digits.");
         return true;
     }
 
     public static boolean checkGender(String strGender) throws IncorrectGenderException {
         if(!strGender.matches("[f|m]"))
-            throw new IncorrectGenderException("You entered wrong gender format.");
+            throw new IncorrectGenderException("You entered wrong gender format. Must be f or m.");
         return true;
     }
 
@@ -133,4 +133,5 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 }
