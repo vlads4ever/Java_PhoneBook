@@ -1,5 +1,11 @@
 package org.example;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,15 +19,16 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            String[] userData = getPersonData(scanner);
-            Person person = parsePersonData(userData, dateFormat);
+            String[] userData = getPersonData();
+            Person person = parsePersonData(userData);
             System.out.println(person);
+            saveToFile(person);
         } catch (IncorrectAmountOfDataException | IncorrectGenderException | IncorrectPhoneNumberException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static String[] getPersonData(Scanner scanner) throws IncorrectAmountOfDataException {
+    public static String[] getPersonData() throws IncorrectAmountOfDataException {
         System.out.println("Please enter below person`s data separated by spaces (FIO, birthday, phone number, gender f/m):");
         String userInput = scanner.nextLine();
         String[] words = userInput.split(" ");
@@ -34,7 +41,7 @@ public class Main {
         return words;
     }
 
-    public static Person parsePersonData(String[] userData, DateFormat dateFormat)
+    public static Person parsePersonData(String[] userData)
             throws IncorrectPhoneNumberException, IncorrectGenderException {
         String surname = userData[0];
         String name = userData[1];
@@ -52,12 +59,36 @@ public class Main {
         if (!phoneNumber.matches("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"))
             throw new IncorrectPhoneNumberException("You entered wrong phone number.");
 
-        String gender = userData[5];
-        if(!gender.matches("[f|m]")) {
+        String strGender = userData[5];
+        Gender gender = Gender.f;
+        if(!strGender.matches("[f|m]")) {
             throw new IncorrectGenderException("You entered wrong gender format.");
+        } else if (strGender == "f") {
+            gender = Gender.f;
+        } else {
+            gender = Gender.m;
         }
-
         return new Person(surname, name, patronymic, birthday, phoneNumber, gender);
     }
 
+    public static void saveToFile(Person person) {
+        String filePath = person.getSurname();
+        String personLine = "<" + person.getSurname() + ">" +
+                            "<" + person.getName() + ">" +
+                            "<" + person.getPatronymic() + ">" +
+                            "<" + dateFormat.format(person.getBirthday()) + ">" +
+                            "<" + person.getPhoneNumber() + ">" +
+                            "<" + person.getGender() + ">\n";
+
+        Path path = Paths.get(filePath);
+        boolean append = true;
+        if (Files.notExists(path)) append = false;    // Дозапись в файл или создание нового
+
+        try(BufferedWriter bufferWriter = new BufferedWriter(new FileWriter(filePath, append))){
+            bufferWriter.write(personLine);
+            System.out.println("File was saved successfully.");
+        } catch(IOException e) {
+            System.out.println("File saving error.");
+        }
+    }
 }

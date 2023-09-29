@@ -6,11 +6,11 @@ public class Person {
     private String surname;
     private String name;
     private String patronymic;
-    private String gender;
+    private Gender gender;
     private String phoneNumber;
     private Date birthday;
 
-    public Person(String surname, String name, String patronymic, Date birthday, String phoneNumber, String gender) {
+    public Person(String surname, String name, String patronymic, Date birthday, String phoneNumber, Gender gender) {
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
@@ -31,7 +31,7 @@ public class Person {
         return patronymic;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -55,7 +55,7 @@ public class Person {
         this.patronymic = patronymic;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
