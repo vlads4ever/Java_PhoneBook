@@ -20,34 +20,51 @@ public class Main {
 
         try {
             String[] userData = getPersonData();
+            int checkData = checkQuantityOfData(userData);
+            if (checkData == -1) {
+                throw new IncorrectAmountOfDataException("You entered not enough data.");
+            } else if (checkData == -2) {
+                throw new IncorrectAmountOfDataException("You entered too much data.");
+            }
             Person person = parsePersonData(userData);
-            System.out.println(person);
             saveToFile(person);
-        } catch (IncorrectAmountOfDataException | IncorrectGenderException | IncorrectPhoneNumberException e) {
+        } catch (IncorrectAmountOfDataException |
+                 IncorrectGenderException |
+                 IncorrectPhoneNumberException |
+                 IncorrectNameFormatException |
+                 IncorrectDateException e) {
             System.out.println(e.getMessage());
         }
     }
 
     public static String[] getPersonData() throws IncorrectAmountOfDataException {
-        System.out.println("Please enter below person`s data separated by spaces (FIO, birthday, phone number, gender f/m):");
+        System.out.println("Please enter below person`s data separated by spaces " +
+                            "(FIO, birthday, phone number, gender f/m):");
         String userInput = scanner.nextLine();
         String[] words = userInput.split(" ");
-
-        if (words.length < 6) {
-            throw new IncorrectAmountOfDataException("You entered not enough data.");
-        } else if (words.length > 6) {
-            throw new IncorrectAmountOfDataException("You entered too much data.");
-        }
         return words;
     }
 
+    public static int checkQuantityOfData(String[] userData) {
+        int quantity = userData.length;
+        if (quantity < 6) {
+            return -1;
+        } else if (quantity > 6) {
+            return -2;
+        }
+        return quantity;
+    }
+
     public static Person parsePersonData(String[] userData)
-            throws IncorrectPhoneNumberException, IncorrectGenderException {
+            throws IncorrectPhoneNumberException, IncorrectGenderException,
+                    IncorrectNameFormatException, IncorrectDateException {
         String surname = userData[0];
         String name = userData[1];
         String patronymic = userData[2];
+        checkName(surname, name, patronymic);
 
         String strBirthday = userData[3];
+        checkBirthday(strBirthday);
         Date birthday = new Date();
         try {
             birthday = dateFormat.parse(strBirthday);
@@ -56,19 +73,44 @@ public class Main {
         }
 
         String phoneNumber = userData[4];
-        if (!phoneNumber.matches("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"))
-            throw new IncorrectPhoneNumberException("You entered wrong phone number.");
+        checkPhoneNumber(phoneNumber);
 
         String strGender = userData[5];
         Gender gender = Gender.f;
-        if(!strGender.matches("[f|m]")) {
-            throw new IncorrectGenderException("You entered wrong gender format.");
-        } else if (strGender == "f") {
-            gender = Gender.f;
-        } else {
-            gender = Gender.m;
+        checkGender(strGender);
+        switch (strGender) {
+            case "f" -> gender = Gender.f;
+            case "m" -> gender = Gender.m;
         }
+
         return new Person(surname, name, patronymic, birthday, phoneNumber, gender);
+    }
+
+    public static boolean checkName(String surname, String name, String patronymic)
+            throws IncorrectNameFormatException {
+        if (!surname.matches("[А-Яа-яЁёa-zA-Z]+") |
+                !name.matches("[А-Яа-яЁёa-zA-Z]+") |
+                !patronymic.matches("[А-Яа-яЁёa-zA-Z]+"))
+            throw new IncorrectNameFormatException("You entered wrong person`s name.");
+        return true;
+    }
+
+    public static boolean checkBirthday(String birthday) throws IncorrectDateException {
+        if (!birthday.matches("\\d{2}\\.\\d{2}.\\d{4}"))
+            throw new IncorrectDateException("You entered wrong date format.");
+        return true;
+    }
+
+    public static boolean checkPhoneNumber(String phoneNumber) throws IncorrectPhoneNumberException {
+        if (!phoneNumber.matches("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"))
+            throw new IncorrectPhoneNumberException("You entered wrong phone number.");
+        return true;
+    }
+
+    public static boolean checkGender(String strGender) throws IncorrectGenderException {
+        if(!strGender.matches("[f|m]"))
+            throw new IncorrectGenderException("You entered wrong gender format.");
+        return true;
     }
 
     public static void saveToFile(Person person) {
@@ -88,7 +130,7 @@ public class Main {
             bufferWriter.write(personLine);
             System.out.println("File was saved successfully.");
         } catch(IOException e) {
-            System.out.println("File saving error.");
+            e.printStackTrace();
         }
     }
 }
